@@ -28,7 +28,7 @@ cd taucoder-client
 
 - `--apikey` your TauCoder API key
 - `--input` list of input image files
-- `--output` output for the processed images. Must be an existing directory if multiple input images are provided
+- `--output` output for the processed images. Must be an existing directory
 
 ## Example
 
