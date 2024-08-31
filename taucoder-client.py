@@ -19,11 +19,11 @@ def connection(apikey):
 
     return base_url, headers
 
-def create_job(conn, input_file_list):
+def create_job(conn, quality, input_file_list):
     base_url, headers = conn
 
     formfields = [
-        ('options', (None, json.dumps({"encoder_version": "latest", "quality": 50}))),
+        ('options', (None, json.dumps({"output_format": "jpeg", "quality": quality}))),
     ]
 
     for input_file in input_file_list:
@@ -53,11 +53,11 @@ def download_job(job, output):
         f.write(response.content)
     print("Downloaded")
 
-def main(apikey, input_file_list, output):
+def main(apikey, quality, input_file_list, output):
     conn = connection(apikey)
 
     print("creating new jobs...")
-    status_code, response_json = create_job(conn, input_file_list)
+    status_code, response_json = create_job(conn, quality, input_file_list)
 
     if status_code != 200:
         print(f'Error: {response_json["error"]}')
@@ -89,6 +89,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='taucoder test client')
     parser.add_argument('--apikey', type=str)
     parser.add_argument('--output', type=str)
+    parser.add_argument('--quality', type=int)
     parser.add_argument('input', type=str, nargs='+')
 
     args = parser.parse_args()
@@ -105,4 +106,8 @@ if __name__ == '__main__':
         print("Error: input files are required")
         exit(1)
 
-    main(args.apikey, args.input, args.output)
+    if args.quality < 25 or args.quality > 95:
+        print("Error: quality must be between 25 and 95")
+        exit(1)
+
+    main(args.apikey, args.quality, args.input, args.output)
